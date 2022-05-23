@@ -64,6 +64,94 @@ class ominibot:
         else:
             ominibot.individual_wheel(V1=0,V3=0,V2=0,V4=0, debug=False) 
         
+        '''
+        mode1чих║ж??
+        a=30
+        if speed>0:
+          if angle > 0:
+              b=angle*(100-a)  
+              ominibot.individual_wheel(V1=a,V3=a,V2=a+b,V4=a+b, debug=False) 
+          elif angle<0:  
+              b=angle*-1*(100-a)
+              ominibot.individual_wheel(V1=a+b,V3=a+b,V2=a,V4=a, debug=False)  
+          else:
+              ominibot.individual_wheel(V1=a,V3=a,V2=a,V4=a, debug=False)
+
+        
+        '''
+        '''
+        mode2?║х???        aaa=50
+        sss=0.4
+        if speed > 0 and angle<sss and angle>-sss:
+          ominibot.individual_wheel(V1=aaa,V3=aaa,V2=aaa,V4=aaa, debug=False)
+        elif speed > 0 and angle<-sss:
+          ominibot.individual_wheel(V1=aaa,V3=aaa,V2=0,V4=0, debug=False)
+        elif speed > 0 and angle>sss:
+          ominibot.individual_wheel(V1=0,V3=0,V2=aaa,V4=aaa, debug=False)
+        elif speed == 0 and angle==0:
+          ominibot.individual_wheel(V1=0,V3=0,V2=0,V4=0, debug=False)  
+        '''
+        '''
+        mode3 ROSKY??        limit = 100
+        length = 0.15
+        gain = 1
+        trim = 0
+        from donkeycar.parts.ominibot_car_com import OminibotCar,threading,sys
+        _port = "/dev/ominibot_car"
+        _baud = 115200
+        ominibot  = OminibotCar(_port,_baud)
+        ominibot.set_system_mode(platform="individual_wheel")
+        print('angle',angle)
+        linear_velocity_x=30
+
+        # differential drive configuration
+        if angle > 0:
+          omega= angle * 1 *  (limit-linear_velocity_x)
+        elif angle < 0:
+          omega = angle * -1 * (limit-linear_velocity_x)
+        elif speed == 0:
+          omega = 0
+        else:
+          pass
+
+        v_left  = (gain - trim) * (linear_velocity_x - 0.5 * (omega * length))
+        v_right = (gain - trim) * (linear_velocity_x + 0.5 * (omega * length))
+        
+        # v1, v3 = v_right ; v2, v4 = v_left
+        ominibot.individual_wheel(V1=v_right, V3=v_right, V2=v_left , V4=v_left, debug=False)
+        
+        '''
+        """
+        mode1+2
+        a=50
+        limit_low=0.1
+        limit_high=0.4
+        
+        if speed>0:
+          if angle < limit_low and angle > -limit_low:
+              ominibot.individual_wheel(V1=a,V3=a,V2=a,V4=a, debug=False)
+               
+          elif angle > limit_low and angle < limit_high:
+              ominibot.individual_wheel(V1=-a,V3=-a,V2=a,V4=a, debug=False)
+              
+          elif angle > limit_high:
+              c=20
+              b=angle*(100-c)
+              ominibot.individual_wheel(V1=c,V3=c,V2=c+b,V4=c+b, debug=False)  
+               
+          elif angle < -limit_low and angle > -limit_high:  
+              ominibot.individual_wheel(V1=a,V3=a,V2=-a,V4=-a, debug=False)
+              
+          elif angle < -limit_high:  
+              c=20
+              b=angle*(100-c)*-1
+              ominibot.individual_wheel(V1=c+b,V3=c+b,V2=c,V4=c, debug=False) 
+              
+        else:
+            ominibot.individual_wheel(V1=0,V3=0,V2=0,V4=0, debug=False)         
+        """  
+
+    
 class PCA9685:
     ''' 
     PWM motor controler using PCA9685 boards. 
